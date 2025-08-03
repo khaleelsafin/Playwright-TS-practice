@@ -22,17 +22,7 @@ pipeline{
      post {
                 always {
                     // Archive all test artifacts (including screenshots)
-                    archiveArtifacts artifacts: 'screenshots/**/*.png, playwright-report/**/*.png', allowEmptyArchive: true
-                    
-                    // Publish HTML report (requires HTML Publisher plugin)
-                    publishHTML target: [
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'playwright-report',
-                        reportFiles: 'index.html',
-                        reportName: 'Playwright Report'
-                    ]
+                    archiveArtifacts artifacts: 'screenshot/**/*.png, playwright-report/**/*.png', allowEmptyArchive: true
                 }
                 }
 }
