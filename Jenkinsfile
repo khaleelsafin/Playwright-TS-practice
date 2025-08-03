@@ -2,7 +2,7 @@ pipeline{
     agent any
     stages{
         stage("Get Pull"){
-            cd C:\Users\khaleel safin shaik\Desktop\PlayWright
+            cd C:/Users/khaleel safin shaik/Desktop/PlayWright
             git pull
         }
 
