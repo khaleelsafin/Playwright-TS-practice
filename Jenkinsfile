@@ -11,7 +11,9 @@ pipeline{
 
         stage("Test"){
             steps{
+                bat '''
             npx test playwright
+            '''
             }
         }
     }
