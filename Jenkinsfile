@@ -13,6 +13,7 @@ pipeline{
         stage("Test"){
             steps{
                 bat '''
+                 cd C:/Users/khaleel safin shaik/Desktop/PlayWright
             npx test playwright
             '''
             }
