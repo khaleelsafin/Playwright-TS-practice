@@ -5,7 +5,6 @@ pipeline{
             steps{
                 bat '''
                 cd C:/Users/khaleel safin shaik/Desktop/PlayWright
-                git pull
                 '''
                 }
             }
