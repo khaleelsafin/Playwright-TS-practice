@@ -3,8 +3,10 @@ pipeline{
     stages{
         stage("Get Pull"){
             steps{
-                dir('C:/Users/khaleel safin shaik/Desktop/PlayWright'){
+                bat '''
+                cd C:/Users/khaleel safin shaik/Desktop/PlayWright
                 git pull
+                '''
                 }
             }
         }
