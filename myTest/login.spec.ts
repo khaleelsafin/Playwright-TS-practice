@@ -17,7 +17,7 @@ test('login test', async ({page, browserName })=> {
      console.log("home page title: "+title)
 
 
-      const screenshotBuffer = await page.screenshot({path: `homepage-${browserName}.png`})
+      const screenshotBuffer = await page.screenshot({path: `screenshot/homepage-${browserName}.png`})
 
     //   await testInfo.attach('my-screenshot', {
     //     body: screenshotBuffer,
