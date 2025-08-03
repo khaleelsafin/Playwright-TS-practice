@@ -1,7 +1,7 @@
 import {test, expect, Browser, Page, Locator} from '@playwright/test'
 import {webkit, chromium, firefox} from '@playwright/test';
 
-test('login test', async ({page})=> {
+test('login test', async ({page, browserName })=> {
     // const browser:Browser = await chromium.launch({headless:false, channel:'chrome'})
     // const page:Page = await browser.newPage();
     await page.goto("https://naveenautomationlabs.com/opencart/index.php?route=account/login")
@@ -17,7 +17,7 @@ test('login test', async ({page})=> {
      console.log("home page title: "+title)
 
 
-      const screenshotBuffer = await page.screenshot({path: 'homepage.png'})
+      const screenshotBuffer = await page.screenshot({path: `homepage-${browserName}.png`})
 
     //   await testInfo.attach('my-screenshot', {
     //     body: screenshotBuffer,
