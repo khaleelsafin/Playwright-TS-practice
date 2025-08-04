@@ -1,13 +1,9 @@
 pipeline {
-    agent {
-        label 'linux' 
-        // Optional: Use Docker for cleaner isolation
-        // docker { image 'mcr.microsoft.com/playwright:v1.40.0-focal' }
-    }
+    agent any
 
     environment {
-        PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/browsers"  # Isolate browser storage
-        TMPDIR = "${WORKSPACE}/tmp"  # Redirect temp files
+        PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/browsers" 
+        TMPDIR = "${WORKSPACE}/tmp"  
     }
 
     stages {
@@ -57,7 +53,7 @@ pipeline {
                     /tmp/* \
                     ${WORKSPACE}/tmp/*
             '''
-            cleanWs()  # Final workspace cleanup
+            cleanWs() 
         }
     }
 }
