@@ -1,59 +1,62 @@
 pipeline {
-    agent any
+  agent {
+    docker {
+      image 'mcr.microsoft.com/playwright:v1.44.1-jammy'
+      args '-v $HOME/.cache:/root/.cache'  // to cache browsers/plugins
+    }
+  }
 
-    environment {
-        PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/browsers" 
-        TMPDIR = "${WORKSPACE}/tmp"  
+  options {
+    timeout(time: 20, unit: 'MINUTES')
+    disableConcurrentBuilds()
+  }
+
+  environment {
+    HOME = "${env.WORKSPACE}"  // fixes some path issues in Linux
+  }
+
+  stages {
+    stage('Checkout Code') {
+      steps {
+        checkout scm
+      }
     }
 
-    stages {
-        stage('Setup') {
-            steps {
-                // Clean workspace before starting
-                cleanWs()
-
-                // Install Node.js (skip if using Docker)
-                sh '''
-                    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-                    . ~/.nvm/nvm.sh && nvm install 18
-                    npm install -g yarn
-                '''
-
-                // Install dependencies with cache cleanup
-                sh '''
-                    yarn install --frozen-lockfile
-                    npx playwright install --with-deps
-                '''
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                // Run tests with limited workers to reduce memory/temp files
-                sh 'npx playwright test --workers=2'
-            }
-            post {
-                always {
-                    junit 'playwright-report/test-results/*.xml'
-                    archiveArtifacts 'playwright-report/*.html'
-                }
-            }
-        }
+    stage('Install Dependencies') {
+      steps {
+        sh 'npm ci'
+      }
     }
 
-    post {
-        always {
-            // Aggressive cleanup
-            sh '''
-                rm -rf \
-                    node_modules \
-                    browsers \
-                    ~/.cache \
-                    ~/.npm \
-                    /tmp/* \
-                    ${WORKSPACE}/tmp/*
-            '''
-            cleanWs() 
+    stage('Run Parallel Browser Tests') {
+      parallel {
+        stage('Chromium') {
+          steps {
+            sh 'npx playwright test --project=chromium'
+          }
         }
+
+        stage('Firefox') {
+          steps {
+            sh 'npx playwright test --project=firefox'
+          }
+        }
+
+        stage('WebKit') {
+          steps {
+            sh 'npx playwright test --project=webkit'
+          }
+        }
+      }
     }
+  }
+
+  post {
+    always {
+      echo 'Pipeline finished.'
+    }
+    failure {
+      echo 'Tests failed!'
+    }
+  }
 }
