@@ -1,14 +1,8 @@
 pipeline {
-  agent none
+  agent any
 
   stages {
     stage('Run Playwright Tests in Docker') {
-      agent {
-        node {
-          label 'master' // or any agent label you're using
-        }
-      }
-
       steps {
         script {
           def workspaceDir = pwd()
