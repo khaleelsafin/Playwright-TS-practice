@@ -5,9 +5,10 @@ pipeline {
     stage('Run Playwright Tests in Docker') {
       steps {
         script {
-          def workspaceDir = pwd()
+          def winPath = pwd()
+          def dockerPath = winPath.replace('C:', '').replace('\\', '/')
 
-          docker.image('mcr.microsoft.com/playwright:v1.44.1-jammy').inside("-v ${workspaceDir}:/app -w /app") {
+          docker.image('mcr.microsoft.com/playwright:v1.44.1-jammy').inside("-v ${winPath}:${dockerPath} -w ${dockerPath}") {
             sh 'npm ci'
 
             parallel chromium: {
