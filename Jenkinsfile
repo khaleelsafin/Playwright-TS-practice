@@ -1,33 +1,30 @@
 pipeline {
-  agent {
-    docker {
-      image 'mcr.microsoft.com/playwright:v1.44.1-jammy'
-      args "-v ${pwd()}:/app -w /app"
-    }
-  }
+  agent none
 
   stages {
-    stage('Install Dependencies') {
-      steps {
-        sh 'npm ci'
+    stage('Run Playwright Tests in Docker') {
+      agent {
+        node {
+          label 'master' // or any agent label you're using
+        }
       }
-    }
 
-    stage('Run Playwright Tests') {
-      parallel {
-        stage('Chromium') {
-          steps {
-            sh 'npx playwright test --project=chromium'
-          }
-        }
-        stage('Firefox') {
-          steps {
-            sh 'npx playwright test --project=firefox'
-          }
-        }
-        stage('WebKit') {
-          steps {
-            sh 'npx playwright test --project=webkit'
+      steps {
+        script {
+          def workspaceDir = pwd()
+
+          docker.image('mcr.microsoft.com/playwright:v1.44.1-jammy').inside("-v ${workspaceDir}:/app -w /app") {
+            sh 'npm ci'
+
+            parallel chromium: {
+              sh 'npx playwright test --project=chromium'
+            },
+            firefox: {
+              sh 'npx playwright test --project=firefox'
+            },
+            webkit: {
+              sh 'npx playwright test --project=webkit'
+            }
           }
         }
       }
